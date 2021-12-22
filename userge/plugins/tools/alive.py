@@ -71,14 +71,13 @@ def _get_alive_text_and_markup(message: Message) -> Tuple[str, Optional[InlineKe
     ms = (end - start).microseconds / 1000
     # ===================================================
     api_url = f"https://animechan.vercel.app/api/random"
+    quote = None
     try:
-        response = requests.get(api_url).json()
-    except Exception:
-        response = None
-    quote = response["quote"]
-    while (len(quote) > 150) and (quote not in sucks):
-        res = requests.get(api_url).json()
-        quote = res["quote"]
+        while quote == None or (len(quote) > 150):
+            res = requests.get(api_url).json()
+            quote = res["quote"]
+    except Exception as e:
+        await message.edit(f"**Some error occured**\n`{e}`")
     ALIVE_TEXT = f"__{quote}__"
     # ===================================================
     markup = None
